@@ -1,13 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Results</title>
+</head>
+<body>
+<h1>Puzzle Results</h1>
 <?php
-$year = $_GET['year'];
-$word = $_GET['word'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $number = escapeshellarg($_POST['number']);
+    $text = escapeshellarg($_POST['text']);
 
-if( !is_numeric($year) || empty($word)) {
-    echo "<p>Error: Invalid input</p>";
-    exit();
+    $command = "python3 process.py $number $text";
+    $output = shell_exec($command);
+
+    if ($output === null) {
+        echo "<p>Error: Unable to execute the Python script.</p>";
+    } else {
+        echo "<pre>$output</pre>";
+    }
+} else {
+    echo "<p>Error: Invalid request method.</p>";
 }
-
-$output = shell_exec("python3 process.py year=$year word=$word");
-echo $output;
-
 ?>
+</body>
+</html>

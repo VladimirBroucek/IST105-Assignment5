@@ -1,49 +1,61 @@
-import cgi
+import sys
 import math
 import random
 
-def number_puzzle(num):
-    num = int(num)
-    if num % 2 == 0:
-        return f"Even number. Square root: {math.sqrt(num):.2f}"
+def number_puzzle(number):
+    if number % 2 == 0:
+        result = f"The number {number} is even. Square root: {math.sqrt(number):.2f}"
     else:
-        return f"Odd number. Cube: {num ** 3}"
+        result = f"The number {number} is odd. Cubed: {number ** 3}"
+    return result
 
 def text_puzzle(text):
     binary_text = ' '.join(format(ord(char), '08b') for char in text)
-    vowels = sum(1 for char in text.lower() if char in "aeiou")
-    return binary_text, vowels
+
+    vowels = "aeiouAEIOU"
+    vowel_count = sum(1 for char in text if char in vowels)
+
+    return f"Binary Encoding: {binary_text}\nVowel Count: {vowel_count}"
 
 def treasure_hunt():
-    treasure_number = random.randint(1, 100)
-    attempts = 0
-    guessed = False
+    target = random.randint(1, 100)
+    attempts = 5
+    guess = None
 
-    while attempts < 5:
-        guess = random.randint(1, 100)
-        if guess == treasure_number:
-            guessed = True
-            break
-        attempts += 1
+    for _ in range(attempts):
+        guess = random.randint(1, 100)  # Simulated guess
+        if guess == target:
+            return f"You guessed the number {target} correctly in {_+1} attempts! 🎉 You win the treasure!"
 
-    return "You found the treasure!" if guessed else "You failed to find the treasure!"
+    return f"Sorry! The correct number was {target}. Better luck next time! ❌"
 
-form = cgi.FieldStorage()
-year = form.getvalue("year")
-word = form.getvalue("word")
+def main():
+    if len(sys.argv) != 3:
+        print("Error: Invalid input")
+        return
 
-if year is None or word is None:
-    print("Content-type: text/html\n")
-    print("<p>Error: Missing input values.</p>")
-else:
-    num_result = number_puzzle(year)
-    binary_text, vowel_count = text_puzzle(word)
+    try:
+        number = int(sys.argv[1])
+        text = sys.argv[2]
+    except ValueError:
+        print("Error: Invalid input values")
+        return
+
+    num_result = number_puzzle(number)
+    text_result = text_puzzle(text)
     treasure_result = treasure_hunt()
 
-    print("Content-type: text/html\n")
-    print("<html><head><title>Treasure Hunt Result</title></head><body>")
-    print(f"<p>Number Puzzle Result: {num_result}</p>")
-    print(f"<p>Binary Text: {binary_text}</p>")
-    print(f"<p>Vowel Count: {vowel_count}</p>")
+    print("<html>")
+    print("<head><title>Puzzle Results</title></head>")
+    print("<body style='background-color: #fdf4e3;'>")
+    print("<h2>Number Puzzle Result</h2>")
+    print(f"<p>{num_result}</p>")
+    print("<h2>Text Puzzle Result</h2>")
+    print(f"<p>{text_result}</p>")
+    print("<h2>Treasure Hunt</h2>")
     print(f"<p>{treasure_result}</p>")
-    print("</body></html>")
+    print("</body>")
+    print("</html>")
+
+if __name__ == "__main__":
+    main()
