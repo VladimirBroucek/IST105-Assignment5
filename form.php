@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!is_numeric($year) || empty($word)) {
         echo "<p>Error: Please enter a valid number and a non-empty text.</p>";
     } else {
-        header("Location: process.php?year=$year&word=$word");
+        header("Location: process.php?number=$year&text=$word");
         exit();
     }
 }
